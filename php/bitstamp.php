@@ -397,6 +397,12 @@ class bitstamp extends Exchange {
         return $orderbook;
     }
 
+    public function fetch_tickers($symbols = null, $params = array ()) {
+        return [
+            'BTC/USD' => $this->fetch_ticker('BTC/USD'),
+            'BTC/EUR' => $this->fetch_ticker('BTC/EUR')
+        ];
+    }
     public function fetch_ticker($symbol, $params = array ()) {
         $this->load_markets();
         $request = array(

@@ -115,6 +115,11 @@ class paymium extends Exchange {
         return $this->parse_order_book($response, null, 'bids', 'asks', 'price', 'amount');
     }
 
+    public function fetch_tickers($symbols = null, $params = array ()) {
+        return [
+            'BTC/EUR' => $this->fetch_ticker('BTC/EUR')
+        ];
+    }
     public function fetch_ticker($symbol, $params = array ()) {
         $this->load_markets();
         $request = array(
