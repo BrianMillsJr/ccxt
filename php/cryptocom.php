@@ -37,7 +37,7 @@ class cryptocom extends Exchange {
                 'fetchOHLCV' => false,
                 'fetchOpenOrders' => false,
                 'fetchOrder' => false,
-                'fetchOrderBook' => false,
+                'fetchOrderBook' => true,
                 'fetchL2OrderBook' => false,
                 'fetchLedger' => false,
                 'fetchOrders' => false,
@@ -71,6 +71,7 @@ class cryptocom extends Exchange {
                     'get' => array(
                         'public/get-instruments',
                         'public/get-ticker',
+                        'public/get-book',
                         #'currencies',
                         #'time',
                         #'exchange-rates',
@@ -299,6 +300,23 @@ class cryptocom extends Exchange {
             'address' => $address,
             'info' => $response,
         );
+    }
+
+    public function fetch_order_book($symbol, $limit = null, $params = array ()) {
+        $this->load_markets();
+        $depth = $this->safe_integer($params, 'depth', 3);
+        if ($depth > 150) {
+            throw new ExchangeError($this->id . ' fetchOrderBook $limit argument must be null or < 150');
+        }
+
+        $market = $this->market($symbol);
+        $request = array ('instrument_name' => $market['id'], 'depth' => $depth);
+        $response = $this->publicGetPublicGetBook (array_merge($request, $params));
+
+        $result = $this->safe_value($response, 'result', array());
+        $data = $this->safe_value($result, 'data', array());
+
+        return $data[0];
     }
 
     public function fetch_my_sells($symbol = null, $since = null, $limit = null, $params = array ()) {
