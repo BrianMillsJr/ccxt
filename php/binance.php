@@ -570,7 +570,11 @@ class binance extends Exchange {
         } else if ($type === 'delivery') {
             $method = 'dapiPublicGetExchangeInfo';
         }
-        $response = $this->$method ($query);
+        if (!$response = $this->get_cache(__CLASS__.'::'.$method.'-'.json_encode($query))) {
+            $response = $this->$method ($query);
+            #$response = $this->publicGetCurrencies ($params);
+            $this->set_cache(__CLASS__.'::'.$method.'-'.json_encode($query), $response);
+        }
         //
         // $spot / $margin
         //

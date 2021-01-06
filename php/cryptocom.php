@@ -596,10 +596,11 @@ class cryptocom extends Exchange {
         $expires = $this->safe_integer($options, 'expires', 1000);
         $now = $this->milliseconds();
         if (($timestamp === null) || (($now - $timestamp) > $expires)) {
-            $currencies = $this->publicGetPublicGetInstruments($params);
+            if (!$currencies = $this->get_cache(__CLASS__.'::publicGetPublicGetInstruments-'.json_encode($params))) {
+                $currencies = $this->publicGetPublicGetInstruments($params);
+                $this->set_cache(__CLASS__.'::publicGetPublicGetInstruments-'.json_encode($params), $currencies);
+            }
             $currencies = $this->safe_value($currencies, 'result');
-#print_r($currencies);
-#die;
             #$currencies = $this->publicGetCurrencies ($params);
             #$exchangeRates = $this->publicGetExchangeRates ($params);
             $this->options['fetchCurrencies'] = array_merge($options, array(
@@ -742,6 +743,8 @@ class cryptocom extends Exchange {
             $val = $this->parse_ticker($ticker);
             if ($val) {
                 $results[$val['symbol']] = $val;
+            } else {
+                #print_r ('* Not in ticker : ' . $ticker['i']);
             }
         }
 

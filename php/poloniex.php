@@ -479,7 +479,10 @@ class poloniex extends Exchange {
     }
 
     public function fetch_currencies($params = array ()) {
-        $response = $this->publicGetReturnCurrencies ($params);
+        if (!$response = $this->get_cache(__CLASS__.'::publicGetReturnCurrencies-'.json_encode($params))) {
+            $response = $this->publicGetReturnCurrencies ($params);
+            $this->set_cache(__CLASS__.'::publicGetReturnCurrencies-'.json_encode($params), $response);
+        }
         $ids = is_array($response) ? array_keys($response) : array();
         $result = array();
         for ($i = 0; $i < count($ids); $i++) {

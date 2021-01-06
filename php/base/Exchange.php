@@ -188,6 +188,20 @@ class Exchange {
         'zb',
     );
 
+    public function get_cache($key, $expires = 1000) {
+        $filename = sys_get_temp_dir()."/cache-cryptobot-$key.json";
+        if (!file_exists($filename)) { return null; }
+        $now = $this->seconds();
+        $timestamp = filemtime($filename);
+        if ($now - $timestamp > $expires) { return null; }
+
+        return json_decode(file_get_contents($filename), true);
+    }
+    public function set_cache($key, $value) {
+        $filename = sys_get_temp_dir()."/cache-cryptobot-$key.json";
+        file_put_contents($filename, json_encode($value));
+    }
+
     public static function split($string, $delimiters = array(' ')) {
         return explode($delimiters[0], str_replace($delimiters, $delimiters[0], $string));
     }
@@ -1567,6 +1581,7 @@ class Exchange {
     }
 
     public function load_markets($reload = false, $params = array()) {
+#print_r(PHP_EOL.'- '.__METHOD__);
         if (!$reload && $this->markets) {
             if (!$this->markets_by_id) {
                 return $this->set_markets($this->markets);
@@ -2478,6 +2493,7 @@ class Exchange {
     }
 
     public function __call($function, $params) {
+#print_r(PHP_EOL.'* '.get_called_class().'\\'.$function.PHP_EOL);
         if (array_key_exists($function, $this->defined_rest_api)) {
             $partial = $this->defined_rest_api[$function];
             $entry = $partial[3];

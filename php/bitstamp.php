@@ -334,7 +334,10 @@ class bitstamp extends Exchange {
         $expires = $this->safe_integer($options, 'expires', 1000);
         $now = $this->milliseconds();
         if (($timestamp === null) || (($now - $timestamp) > $expires)) {
-            $response = $this->publicGetTradingPairsInfo ($params);
+            if (!$response = $this->get_cache(__CLASS__.'::publicGetTradingPairsInfo-'.json_encode($params))) {
+                $response = $this->publicGetTradingPairsInfo ($params);
+                $this->set_cache(__CLASS__.'::publicGetTradingPairsInfo-'.json_encode($params), $response);
+            }
             $this->options['fetchMarkets'] = array_merge($options, array(
                 'response' => $response,
                 'timestamp' => $now,

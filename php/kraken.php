@@ -257,7 +257,10 @@ class kraken extends Exchange {
     }
 
     public function fetch_markets($params = array ()) {
-        $response = $this->publicGetAssetPairs ($params);
+        if (!$response = $this->get_cache(__CLASS__.'::publicGetAssetPairs-'.json_encode($params))) {
+            $response = $this->publicGetAssetPairs ($params);
+            $this->set_cache(__CLASS__.'::publicGetAssetPairs-'.json_encode($params), $response);
+        }
         //
         //     {
         //         "error":array(),
@@ -399,7 +402,10 @@ class kraken extends Exchange {
     }
 
     public function fetch_currencies($params = array ()) {
-        $response = $this->publicGetAssets ($params);
+        if (!$response = $this->get_cache(__CLASS__.'::publicGetAssets-'.json_encode($params))) {
+            $response = $this->publicGetAssets ($params);
+            $this->set_cache(__CLASS__.'::publicGetAssets-'.json_encode($params), $response);
+        }
         //
         //     {
         //         "error" => array(),

@@ -499,8 +499,14 @@ class bitfinex extends Exchange {
     }
 
     public function fetch_markets($params = array ()) {
-        $ids = $this->publicGetSymbols ();
-        $details = $this->publicGetSymbolsDetails ();
+        if (!$ids = $this->get_cache(__CLASS__.'::publicGetSymbols')) {
+            $ids = $this->publicGetSymbols ();
+            $this->set_cache(__CLASS__.'::publicGetSymbols', $ids);
+        }
+        if (!$details = $this->get_cache(__CLASS__.'::publicGetSymbolsDetails')) {
+            $details = $this->publicGetSymbolsDetails ();
+            $this->set_cache(__CLASS__.'::publicGetSymbolsDetails', $details);
+        }
         $result = array();
         for ($i = 0; $i < count($details); $i++) {
             $market = $details[$i];

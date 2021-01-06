@@ -305,7 +305,10 @@ class kucoin extends Exchange {
     }
 
     public function fetch_markets($params = array ()) {
-        $response = $this->publicGetSymbols ($params);
+        if (!$response = $this->get_cache('publicGetSymbols-'.json_encode($params))) {
+            $response = $this->publicGetSymbols ($params);
+            $this->set_cache('publicGetSymbols-'.json_encode($params), $response);
+        }
         //
         //     {
         //         quoteCurrency => 'BTC',
@@ -372,7 +375,10 @@ class kucoin extends Exchange {
     }
 
     public function fetch_currencies($params = array ()) {
-        $response = $this->publicGetCurrencies ($params);
+        if (!$response = $this->get_cache(__CLASS__.'::publicGetCurrencies-'.json_encode($params))) {
+            $response = $this->publicGetCurrencies ($params);
+            $this->set_cache(__CLASS__.'::publicGetCurrencies-'.json_encode($params), $response);
+        }
         //
         //     {
         //         "currency" => "OMG",
