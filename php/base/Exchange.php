@@ -2036,6 +2036,17 @@ class Exchange {
         throw new NotSupported($this->id . ' API does not allow to fetch all tickers at once with a single call to fetch_tickers () for now');
     }
 
+    public function fetch_tickers_light($symbols, $params = array()) {
+        $tickers = array ();
+        foreach ($this->fetch_tickers($symbols, $params) as $ticker) {
+            $tickers[$ticker['symbol']] = array (
+                'ask' => $ticker['ask'],
+                'bid' => $ticker['bid'],
+            );
+        }
+        return $tickers;
+    }
+
     public function fetchTickers($symbols = null, $params = array()) {
         return $this->fetch_tickers($symbols, $params);
     }
