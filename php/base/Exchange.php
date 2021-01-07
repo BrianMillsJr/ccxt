@@ -2046,6 +2046,19 @@ class Exchange {
         }
         return $tickers;
     }
+    public function fetch_order_book_light($symbol, $limit = null, $params = array ()) {
+        $orders = $this->fetch_order_book($symbol, $limit, $params);
+        $asks = $bids = array ();
+        for ($i=0; $i<10; $i++) {
+            if (!isset($orders['asks'][$i])) { break; }
+            $asks[] = $orders['asks'][$i];
+            $bids[] = $orders['bids'][$i];
+        }
+        return array (
+            'asks' => $asks,
+            'bids' => $bids,
+        );
+    }
 
     public function fetchTickers($symbols = null, $params = array()) {
         return $this->fetch_tickers($symbols, $params);
