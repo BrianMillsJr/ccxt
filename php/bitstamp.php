@@ -401,10 +401,32 @@ class bitstamp extends Exchange {
     }
 
     public function fetch_tickers($symbols = null, $params = array ()) {
+    /*
         return [
             'BTC/USD' => $this->fetch_ticker('BTC/USD'),
             'BTC/EUR' => $this->fetch_ticker('BTC/EUR')
         ];
+        */
+        $return = array ();
+        # Supported values for currency_pair: btcusd, btceur, btcgbp, btcpax, btcusdc, gbpusd, gbpeur, eurusd, xrpusd, xrpeur, xrpbtc, xrpgbp, xrppax, ltcusd, ltceur, ltcbtc, ltcgbp, ethusd, etheur, ethbtc, ethgbp, ethpax, ethusdc, bchusd, bcheur, bchbtc, bchgbp, paxusd, paxeur, paxgbp, xlmbtc, xlmusd, xlmeur, xlmgbp, linkusd, linkeur, linkgbp, linkbtc, linketh, omgusd, omgeur, omggbp, omgbtc, usdcusd, usdceur 
+        $allowedCurrencies = ['btc','usd','usdt','eur','eth','omg'];
+        #$allowedCurrencies[] = 'usdc';
+        #$allowedCurrencies[] = 'ltc';
+        #$allowedCurrencies[] = 'link';
+        foreach (explode(', ', "btcusd, btceur, btcgbp, btcpax, btcusdc, gbpusd, gbpeur, eurusd, xrpusd, xrpeur, xrpbtc, xrpgbp, xrppax, ltcusd, ltceur, ltcbtc, ltcgbp, ethusd, etheur, ethbtc, ethgbp, ethpax, ethusdc, bchusd, bcheur, bchbtc, bchgbp, paxusd, paxeur, paxgbp, xlmbtc, xlmusd, xlmeur, xlmgbp, linkusd, linkeur, linkgbp, linkbtc, linketh, omgusd, omgeur, omggbp, omgbtc, usdcusd, usdceur") as $pair) {
+            $p1 = substr($pair, 0, 4); $p2 = substr($pair, 4);
+            if (!in_array($p1, $allowedCurrencies) || !in_array($p2, $allowedCurrencies)) {
+                $p1 = substr($pair, 0, 3); $p2 = substr($pair, 3);
+                if (!in_array($p1, $allowedCurrencies) || !in_array($p2, $allowedCurrencies)) {
+                    $p1 = $p2 = false;
+                }
+            }
+            if ($p1 !== false) {
+                $symbol = strtoupper($p1).'/'.strtoupper($p2);
+                $return[$symbol] = $this->fetch_ticker($symbol);
+            }
+        }
+        return $return;
     }
     public function fetch_ticker($symbol, $params = array ()) {
         $this->load_markets();
