@@ -2049,10 +2049,11 @@ class Exchange {
     public function fetch_order_book_light($symbol, $limit = null, $params = array ()) {
         $orders = $this->fetch_order_book($symbol, $limit, $params);
         $asks = $bids = array ();
-        for ($i=0; $i<10; $i++) {
-            if (!isset($orders['asks'][$i])) { break; }
-            $asks[] = $orders['asks'][$i];
-            $bids[] = $orders['bids'][$i];
+        for ($i=0; $i<50; $i++) {
+            if (isset($orders['asks'][$i]))
+                $asks[] = $orders['asks'][$i];
+            if (isset($orders['bids'][$i]))
+                $bids[] = $orders['bids'][$i];
         }
         return array (
             'asks' => $asks,
